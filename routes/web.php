@@ -25,4 +25,3 @@ $router->delete('/tags/delete/{id}','Admin\TagController@deleteTag');
 
 //Admin Routes
 $router->get('/admins', 'AdminController@getAllAdmins');
-// new
