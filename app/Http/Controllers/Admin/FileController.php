@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Contracts\Services\ContactContract;
 use App\Contracts\Services\FileContract;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,12 +8,10 @@ use Illuminate\Http\Request;
 class FileController extends Controller
 {
     private $fileService;
-    private $contactService;
 
-    public function __construct(FileContract $fileService, ContactContract $contactContract)
+    public function __construct(FileContract $fileService)
     {
         $this->fileService = $fileService;
-        $this->contactService = $contactContract;
     }
     public function uploadCsv(Request $request)
     {
@@ -25,10 +22,4 @@ class FileController extends Controller
     {
         return response()->json($this->fileService->processCsv($request));
     }
-
-    public function test()
-    {
-        return response()->json($this->contactService->uploadContact());
-    }
-
 }

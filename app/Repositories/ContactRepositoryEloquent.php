@@ -15,6 +15,6 @@ class ContactRepositoryEloquent extends BaseRepository implements ContactReposit
 
     public function uploadContact($contact)
     {
-        return $this->model()->upsert($contact);
+        return $this->model()->insert($contact);
     }
 }
