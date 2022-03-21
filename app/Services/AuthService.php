@@ -30,7 +30,7 @@ class AuthService implements AuthContract
                 'User Successfully Authenticated!',
                 $this->respondWithToken($token)
             );
-        }catch (Exception $exception){
+        }catch (\Exception $exception){
             return UtilityHelper::RETURN_ERROR_FORMAT(
                 ResponseAlias::HTTP_BAD_REQUEST
             );

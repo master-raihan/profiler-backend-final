@@ -17,6 +17,9 @@ $router->get('/users/edit/{id}','Admin\UserController@editUser');
 $router->post('/users/update','Admin\UserController@updateUser');
 $router->delete('/users/delete/{id}','Admin\UserController@deleteUser');
 
+//Filtering Query
+$router->get('/contracts/filter','Admin\UserController@filter');
+
 //Tag Routes
 $router->get('/tags','Admin\TagController@getAllTags');
 $router->post('/tags/create','Admin\TagController@createTag');

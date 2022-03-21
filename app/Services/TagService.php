@@ -25,7 +25,7 @@ class TagService implements TagContract
                 'All Tags Successfully Fetched!',
                 $this->tagRepository->getAllTags()
             );
-        }catch (Exception $exception){
+        }catch (\Exception $exception){
             return UtilityHelper::RETURN_ERROR_FORMAT(
                 ResponseAlias::HTTP_BAD_REQUEST
             );
@@ -47,11 +47,11 @@ class TagService implements TagContract
                 'tag_value' => $request->tag_value
             ];
             return UtilityHelper::RETURN_SUCCESS_FORMAT(
-                ResponseAl,
+                ResponseAlias::HTTP_OK,
                 'A Tag Successfully Created!',
                 $this->tagRepository->createTag($tag)
             );
-        }catch (Exception $exception){
+        }catch (\Exception $exception){
             return UtilityHelper::RETURN_ERROR_FORMAT(
                 ResponseAlias::HTTP_BAD_REQUEST
             );
@@ -65,7 +65,7 @@ class TagService implements TagContract
                 'A Tag Successfully Deleted!',
                 $this->tagRepository->deleteTag($id)
             );
-        }catch (Exception $exception){
+        }catch (\Exception $exception){
             return UtilityHelper::RETURN_ERROR_FORMAT(
                 ResponseAlias::HTTP_BAD_REQUEST
             );
