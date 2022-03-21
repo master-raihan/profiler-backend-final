@@ -54,9 +54,9 @@ return [
         'use_shopify',
         'linkedin_analytics',
     ],
-    // 'fields_sample' => [
-    //     'first_name',
-    //     'last_name',
-    //     'email'
-    // ]
+     'fields_sample' => [
+         'first_name',
+         'last_name',
+         'email'
+     ]
 ];

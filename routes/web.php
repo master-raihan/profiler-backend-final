@@ -8,7 +8,6 @@ $router->post('/login','Admin\AuthController@login');
 //File Routes
 $router->post('/file/upload', 'Admin\FileController@uploadCsv');
 $router->post('/file/process', 'Admin\FileController@processCsv');
-$router->post('/files', 'Admin\FileController@test');
 
 //User Routes
 $router->get('/users','Admin\UserController@getAllUsers');
@@ -23,6 +22,3 @@ $router->post('/tags/create','Admin\TagController@createTag');
 $router->delete('/tags/delete/{id}','Admin\TagController@deleteTag');
 
 
-//Admin Routes
-$router->get('/admins', 'AdminController@getAllAdmins');
-//new

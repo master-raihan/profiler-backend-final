@@ -27,7 +27,7 @@ class CsvParser
                 $headers = fgetcsv($handle, 1000, ",");
                 while (($data = fgetcsv($handle, 1000, ",")) !== false)
                 {
-                    $parsedValues[$row] = array_combine($headers, $data);
+                    $parsedValues[$row] = $data;
                     $row++;
                 }
                 fclose($handle);
@@ -57,5 +57,4 @@ class CsvParser
 
         return $headers;
     }
-
 }

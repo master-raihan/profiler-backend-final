@@ -47,7 +47,7 @@ class TagService implements TagContract
                 'tag_value' => $request->tag_value
             ];
             return UtilityHelper::RETURN_SUCCESS_FORMAT(
-                ResponseAl,
+                ResponseAlias::HTTP_OK,
                 'A Tag Successfully Created!',
                 $this->tagRepository->createTag($tag)
             );

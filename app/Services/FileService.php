@@ -39,17 +39,18 @@ class FileService implements FileContract
                 $file = new CsvParser();
                 $csvFile = $this->fileRepository->getFileById($uploadedCsvFile->id);
                 $file->load('csv-files/'.$csvFile->file_name_location);
-                if($request->has('header'))
+                if($request->header == 1)
                 {
                     $csvData = $file->read(true);
-                    $headings = $file->headings();
+                    $headings = config('csv.fields');
                 }else {
                     $csvData = $file->read(false);
+                    $headings = config('csv.fields');
                 }
             }
-            return ['headings'=>$headings ?? null, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile];
+            return ['headings'=> $headings, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile];
         }
-        return 'File unavailable';
+        return 'File Unavailable';
     }
 
     public function getFileById($id)
@@ -59,30 +60,18 @@ class FileService implements FileContract
 
     public function processCsv($request)
     {
+
         if($request->has('csvFileId'))
         {
             $csvFile = $this->fileRepository->getFileById($request->csvFileId);
-
-//            if($request->has('header'))
-//            {
-//                $csvData = $file->read(true);
-//                $headings = $file->headings();
-//            }else {
-//                $csvData = $file->read(false);
-//            }
-
             $sample = array();
-            $headings = config('csv.fields_sample');
-            foreach (config('csv.fields_sample') as $index => $field) {
-                if ($request->has('header')) {
-                    if ($request->fields[$field] != -1)
-                    {
-                        $sample[$field] = $headings[$request->fields[$field]];
-                    }
-                } else {
-                    if ($request->fields[$index] != -1) {
-                        $sample[$field] = $headings[$request->fields[$index]];
-                    }
+            $headings = config('csv.fields');
+            foreach (config('csv.fields') as $field) {
+                if ($request->json()->all()['fields'][$field] != -1)
+                {
+                    $sample[$field] = $request->json()->all()['fields'][$field];
+                }elseif ($request->json()->all()['fields'][$field] == -1) {
+                    $sample[$field] = -1;
                 }
             }
 
@@ -91,30 +80,13 @@ class FileService implements FileContract
                 'file_id' => $csvFile->id,
                 'user_id' => $csvFile->user_id
             ];
+            $tempCsvFileLocation = 'pending-csv-files/temp-'.time().'.json';
+            file_put_contents($tempCsvFileLocation, json_encode($response));
 
-
-//            foreach ($csvData as $row) {
-//                $sample = array();
-//
-//                foreach (config('csv.fields_sample') as $index => $field) {
-//                    if ($request->has('header')) {
-//                        if ($request->fields[$field] != -1)
-//                        {
-//                            $sample[$field] = $row[$request->fields[$field]];
-//                        }
-//                    } else {
-//                        if ($request->fields[$index] != -1) {
-//                            $sample[$field] = $row[$request->fields[$index]];
-//                        }
-//                    }
-//                }
-//                $response[] = $sample;
-//            }
+            return $tempCsvFileLocation;
         }
-        $tempCsvFileLocation = 'pending-csv-files/temp-'.time().'.json';
-        file_put_contents($tempCsvFileLocation, json_encode($response));
 
-        return $tempCsvFileLocation;
+        return "File Id Required";
     }
 
 }
