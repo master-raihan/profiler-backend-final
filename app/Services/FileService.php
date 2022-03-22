@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Contracts\Services\FileContract;
 use App\Contracts\Repositories\FileRepository;
 use App\Helpers\CsvParser;
+use App\Helpers\UtilityHelper;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class FileService implements FileContract
 {
@@ -48,9 +50,9 @@ class FileService implements FileContract
                     $headings = config('csv.fields');
                 }
             }
-            return ['headings'=> $headings, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile];
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Processed!", ['headings'=> $headings, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile]);
         }
-        return 'File Unavailable';
+        return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, 'File Unavailable');
     }
 
     public function getFileById($id)
@@ -83,10 +85,10 @@ class FileService implements FileContract
             $tempCsvFileLocation = 'pending-csv-files/temp-'.time().'.json';
             file_put_contents($tempCsvFileLocation, json_encode($response));
 
-            return $tempCsvFileLocation;
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Queued For Processing", $tempCsvFileLocation);
         }
 
-        return "File Id Required";
+        return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "File Id Required");
     }
 
 }

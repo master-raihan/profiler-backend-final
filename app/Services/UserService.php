@@ -28,12 +28,12 @@ class UserService implements UserContract
 
     public function getAllUsers()
     {
-        return $this->userRepository->getAllUsers();
+        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "User Fetched Successfully", $this->userRepository->getAllUsers());
 
     }
 
     public function getLastUser(){
-        return $this->userRepository->getLastUser();
+        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Last User Fetched", $this->userRepository->getLastUser());
     }
 
     public function createUser($request){
@@ -68,11 +68,11 @@ class UserService implements UserContract
             'tag_value' => 'default',
             'is_default' => $this->variable->DEFAULT_VALUE
         ];
-        return $this->tagRepository->createTag($tag);
+        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "New User Created", $this->tagRepository->createTag($tag));
     }
 
     public  function editUser($id){
-        return $this->userRepository->editUser($id);
+        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Edit User", $this->userRepository->editUser($id));
     }
 
     public function updateUser($request){
