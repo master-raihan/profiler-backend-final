@@ -6,6 +6,8 @@ use App\Contracts\Repositories\ContactRepository;
 use App\Contracts\Repositories\FileRepository;
 use App\Contracts\Services\ContactContract;
 use App\Helpers\CsvParser;
+use App\Helpers\UtilityHelper;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ContactService implements ContactContract
 {
@@ -50,7 +52,10 @@ class ContactService implements ContactContract
                 }
             }
         }
-        return $response;
+        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK,
+            "File Contact Uploaded Successfully",
+            $response
+        );
     }
 
     public function resolveNull($text)

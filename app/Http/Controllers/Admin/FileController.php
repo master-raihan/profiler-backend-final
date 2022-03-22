@@ -15,11 +15,13 @@ class FileController extends Controller
     }
     public function uploadCsv(Request $request)
     {
-        return response()->json($this->fileService->uploadCsv($request));
+        $serviceResponse = $this->fileService->uploadCsv($request);
+        return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
     public function processCsv(Request $request)
     {
-        return response()->json($this->fileService->processCsv($request));
+        $serviceResponse = $this->fileService->processCsv($request);
+        return response()->json($serviceResponse, $serviceResponse['statuss']);
     }
 }

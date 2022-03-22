@@ -19,12 +19,14 @@ class UserController extends Controller
     }
     public function getAllUsers()
     {
-        return $this->userService->getAllUsers();
+        $serviceResponse = $this->userService->getAllUsers();
+        return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
     public function createUser(Request $request)
     {
-        return response()->json($this->userService->createUser($request));
+        $serviceResponse = $this->userService->createUser($request);
+        return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
     public function editUser($id)
@@ -34,23 +36,16 @@ class UserController extends Controller
 
     public function updateUser(Request $request)
     {
-        $response = $this->userService->updateUser($request);
-
-        return response()->json('User Updated successfully!', $response['status']);
+        $serviceResponse = $this->userService->updateUser($request);
+        return response()->json('User Updated successfully!', $serviceResponse['status']);
 
 
     }
 
     public function deleteUser($id)
     {
-
-         if($this->userService->deleteUser( (int) $id)){
-             return response()->json('Deleted successfully!');
-         }
-         else{
-             return response()->json('Error!');
-         }
-
+        $serviceResponse = $this->userService->deleteUser( (int) $id);
+        return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
     public function filter(Request $request){
