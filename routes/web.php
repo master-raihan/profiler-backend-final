@@ -16,6 +16,8 @@ $router->get('/users/edit/{id}','Admin\UserController@editUser');
 $router->post('/users/update','Admin\UserController@updateUser');
 $router->delete('/users/delete/{id}','Admin\UserController@deleteUser');
 
+//custom fields
+$router->post('/add/custom-field','Admin\UserController@addCustomField');
 //Filtering Query
 $router->get('/contracts/filter','Admin\UserController@filter');
 

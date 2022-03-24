@@ -49,27 +49,13 @@ class UserController extends Controller
     }
 
     public function filter(Request $request){
-        $options = $request->toArray();
-        $i = 0;
-        $where = [];
-        foreach($options as $key => $value){
-            $keys[] = $key;
-            foreach($value as $v){
-                $val[] = $v;
-                $where[] = [$keys[$i],$val[$i]];
-            }
-            $i++;
-        }
-        $contacts = Contact::where($where)->get();
+        $serviceResponse = $this->userService->filter($request);
+        return response()->json($serviceResponse, $serviceResponse['status']);
+    }
 
-
-//        $contacts = Contact::query();
-//        for($i=0; $i<count($keys); $i++){
-//            $contacts = $contacts->where($keys[$i],$val[$i]);
-//        }
-//        $contacts = $contacts->get();
-
-        return $contacts;
+    public function addCustomField(Request $request){
+        $serviceResponse = $this->userService->addCustomField($request);
+        return response()->json($serviceResponse, $serviceResponse['status']);
     }
 }
 //$order_details[] = [
