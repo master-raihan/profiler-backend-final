@@ -112,4 +112,9 @@ class UserService implements UserContract
             Log::error($exception->getMessage());
         }
     }
+
+    public function addCustomField($request)
+    {
+        // TODO: Implement addCustomField() method.
+    }
 }
