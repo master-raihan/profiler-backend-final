@@ -17,7 +17,7 @@ class CreateFilesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->tinyInteger('status')->default(1);
-            $table->string('file_name_location', 50);
+            $table->string('file_name_location', 100);
             $table->timestamps();
             $table->foreign('user_id')
                   ->references('id')->on('users')

@@ -28,68 +28,60 @@ class UserService implements UserContract
 
     public function getAllUsers()
     {
-        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "User Fetched Successfully", $this->userRepository->getAllUsers());
-
+        try {
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "User Fetched Successfully", $this->userRepository->getAllUsers());
+        }catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something went wrong!!!");
+        }
     }
 
     public function getLastUser(){
-        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Last User Fetched", $this->userRepository->getLastUser());
+        try{
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Last User Fetched", $this->userRepository->getLastUser());
+        }catch (\Exception $exception){
+            return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something is wrong !!");
+        }
     }
 
     public function createUser($request){
-        //validation
-        $rules = [
-            'username' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|unique:users',
-            'password' => 'required',
-        ];
 
-        $validator = Validator::make($request->all(), $rules);
+        try{
+            $user = [
+                'username' => $request->username,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'status' => $request->status
+            ];
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
+            $userData = $this->userRepository->createUser($user);
+
+            $tag = [
+                'user_id' => $userData['id'],
+                'tag_value' => 'default',
+                'is_default' => $this->variable->DEFAULT_VALUE
+            ];
+
+            $tagData = $this->tagRepository->createTag($tag);
+
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "New User Created", ["user"=> $userData, "user_tag" => $tagData]);
+        }catch (\Exception $exception){
+            return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something went wrong!!");
         }
-
-        $user = [
-            'username' => $request->username,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'status' => $request->status
-        ];
-
-        $userData = $this->userRepository->createUser($user);
-
-        $tag = [
-            'user_id' => $userData['id'],
-            'tag_value' => 'default',
-            'is_default' => $this->variable->DEFAULT_VALUE
-        ];
-        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "New User Created", $this->tagRepository->createTag($tag));
     }
 
     public  function editUser($id){
-        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Edit User", $this->userRepository->editUser($id));
+        try{
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Edit User", $this->userRepository->editUser($id));
+        }catch (\Exception $exception){
+            return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Some thing went wrong!!");
+        }
     }
 
     public function updateUser($request){
         try {
-            //validation
-            $rules = [
-                'username' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
-                'email' => 'required|unique:users,email, ' . (int) $request['id'],
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors());
-            }
 
             $user = [
                 'username' => $request->username,
@@ -104,7 +96,7 @@ class UserService implements UserContract
             }
 
             return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, 'Failed To Update User!');
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             Log::error($exception->getMessage());
         }
     }
@@ -116,7 +108,7 @@ class UserService implements UserContract
             }
 
             return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, 'Failed To Delete User',[]);
-        }catch (Exception $exception){
+        }catch (\Exception $exception){
             Log::error($exception->getMessage());
         }
     }

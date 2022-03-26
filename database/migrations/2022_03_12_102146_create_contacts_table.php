@@ -16,12 +16,12 @@ class CreateContactsTable extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBiginteger('user_id');
-            $table->string('business_name')->length(50)->nullable();
+            $table->string('business_name')->length(100)->nullable();
             $table->string('telephone')->length(50)->nullable();
 
-            $table->string('email')->length(50)->nullable();
+            $table->string('email')->length(100)->nullable();
             $table->string('email_host')->length(50)->nullable();
-            $table->string('website_url')->length(100)->nullable();
+            $table->string('website_url')->length(255)->nullable();
             $table->string('linkedin')->length(255)->nullable();
             $table->string('facebook_profile')->length(255)->nullable();
             $table->string('facebook_messenger')->length(255)->nullable();

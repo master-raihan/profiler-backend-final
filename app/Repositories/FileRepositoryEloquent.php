@@ -15,13 +15,18 @@ class FileRepositoryEloquent extends BaseRepository implements FileRepository
         return new File();
     }
 
+    public function getAllFiles()
+    {
+        return $this->model->get();
+    }
+
     public function uploadCsv($file)
     {
-        return $this->model()->create($file);
+        return $this->model->create($file);
     }
 
     public function getFileById($id)
     {
-        return $this->model()->find($id);
+        return $this->model->find($id);
     }
 }

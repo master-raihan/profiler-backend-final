@@ -60,7 +60,7 @@ $app->singleton(
 |
 */
 
-$app->configure('app');
+//$app->configure('app');
 $app->configure('csv');
 $app->configure('cors');
 /*

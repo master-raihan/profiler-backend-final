@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCustomFieldsTable extends Migration
+class CreateUserFileTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,21 @@ class CreateCustomFieldsTable extends Migration
      */
     public function up()
     {
-        Schema::create('custom_fields', function (Blueprint $table) {
+        Schema::create('user_file', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('custom_fields')->nullable();
+            $table->unsignedBigInteger('file_id');
             $table->timestamps();
 
             $table->foreign('user_id')
-                  ->references('id')->on('users')
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+                ->references('id')->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('file_id')
+                ->references('id')->on('files')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 
@@ -33,6 +38,6 @@ class CreateCustomFieldsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('custom_fields');
+        Schema::dropIfExists('user_file');
     }
 }

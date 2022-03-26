@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Contracts\Services\AuthContract;
 use Illuminate\Http\Request;
@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class AuthController extends Controller
 {
     private $authService;
-    protected $guard = 'admin';
+    protected $guard = 'user';
 
     public function __construct(AuthContract $authService)
     {

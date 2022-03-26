@@ -4,5 +4,5 @@ namespace App\Contracts\Services;
 
 interface AuthContract
 {
-    public function login($request);
+    public function login($request, $guard);
 }

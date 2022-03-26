@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\Services\ContactContract;
 use Illuminate\Http\Request;
 use  App\Http\Controllers\Controller;
 use App\Contracts\Services\UserContract;
@@ -9,11 +10,12 @@ use App\Contracts\Services\UserContract;
 class UserController extends Controller
 {
     private $userService;
+    private $contactService;
 
-    public function __construct(UserContract $userService)
+    public function __construct(UserContract $userService, ContactContract $contactService)
     {
         $this->userService = $userService;
-
+        $this->contactService = $contactService;
     }
     public function getAllUsers()
     {
@@ -46,6 +48,10 @@ class UserController extends Controller
         return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
-
+    public function getContactsByUser(Request $request)
+    {
+        $serviceResponse = $this->contactService->getAllContactsByUser($request);
+        return response()->json($serviceResponse, $serviceResponse['status']);
+    }
 
 }

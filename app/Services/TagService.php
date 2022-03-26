@@ -34,6 +34,7 @@ class TagService implements TagContract
 
     public function createTag($request){
         try{
+
             $rules = [
                 'tag_value' => 'required|unique:tags',
             ];
