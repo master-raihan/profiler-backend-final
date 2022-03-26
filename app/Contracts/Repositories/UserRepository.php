@@ -10,4 +10,5 @@ interface UserRepository
     public function updateUser($user, $id);
     public function deleteUser($id);
     public function getLastUser();
+    public function getContacts($contacts);
 }

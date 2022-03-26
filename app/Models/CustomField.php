@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Contact extends Model
+class CustomField extends Model
 {
-    protected $table = 'contact_sample';
     protected $guarded = [];
+    protected $table = 'custom_fields';
 }

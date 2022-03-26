@@ -9,4 +9,5 @@ interface UserContract {
     public function editUser($id);
     public function updateUser($request);
     public function deleteUser($id);
+    public function addCustomField($request);
 }

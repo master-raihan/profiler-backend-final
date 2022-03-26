@@ -21,6 +21,10 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         return $allUsers;
     }
 
+    public function getContacts($contacts){
+        return $contacts->get();
+    }
+
     public function getLastUser(){
         return $this->model->latest()->first();
     }
