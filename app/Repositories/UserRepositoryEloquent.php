@@ -21,18 +21,12 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         return $allUsers;
     }
 
-    public function getContacts($contacts){
-        return $contacts->get();
-    }
-
     public function getLastUser(){
         return $this->model->latest()->first();
     }
 
     public function createUser($data){
         return $this->model->create($data);
-        // return response()->json('ok');
-        // dd('ok');
     }
     public function editUser($id){
         $user = $this->model->find($id);

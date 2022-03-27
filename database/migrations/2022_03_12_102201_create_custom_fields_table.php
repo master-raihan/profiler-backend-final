@@ -16,13 +16,19 @@ class CreateCustomFieldsTable extends Migration
         Schema::create('custom_fields', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('custom_fields')->nullable();
+            $table->unsignedBigInteger('contact_id');
+            $table->string('field_name');
+            $table->string('field_value');
             $table->timestamps();
 
             $table->foreign('user_id')
                   ->references('id')->on('users')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
+            $table->foreign('contact_id')
+                ->references('id')->on('contacts')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

@@ -40,27 +40,26 @@ class FileService implements FileContract
                 $check = in_array($extension, $allowedFileExtension);
 
                 if($check){
-                    $name = time() . '-' .$csvFile->getClientOriginalName();
-                    $csvFile->move('csv-files', $name);
+                    $fileLocation = time() . '-' .$csvFile->getClientOriginalName();
+                    $csvFile->move('csv-files', $fileLocation);
 
                     $file = [
                         'user_id' => $request->user_id,
                         'status' => $request->status,
-                        'file_name_location' => $name
+                        'file_location' => $fileLocation
                     ];
 
                     $uploadedCsvFile = $this->fileRepository->uploadCsv($file);
 
                     $file = new CsvParser();
                     $csvFile = $this->fileRepository->getFileById($uploadedCsvFile->id);
-                    $file->load('csv-files/'.$csvFile->file_name_location);
+                    $file->load('csv-files/'.$csvFile->file_location);
+                    $headings = config('csv.fields');
                     if($request->header == 1)
                     {
-                        $csvData = $file->read(true);
-                        $headings = config('csv.fields');
+                        $csvData = $file->read();
                     }else {
                         $csvData = $file->read(false);
-                        $headings = config('csv.fields');
                     }
                 }
                 return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Uploaded!", ['headings'=> $headings, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile]);

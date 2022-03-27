@@ -6,7 +6,6 @@ use App\Contracts\Services\TagContract;
 use App\Contracts\Repositories\TagRepository;
 use App\Helpers\UtilityHelper;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Validator;
 
 class TagService implements TagContract
 {
@@ -34,15 +33,6 @@ class TagService implements TagContract
 
     public function createTag($request){
         try{
-
-            $rules = [
-                'tag_value' => 'required|unique:tags',
-            ];
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors());
-            }
             $tag = [
                 'user_id' => '1',
                 'tag_value' => $request->tag_value

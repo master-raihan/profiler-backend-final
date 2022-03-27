@@ -16,7 +16,7 @@ class FileController extends Controller
 
     public function getAllFiles(){
         $serviceResponse = $this->fileService->getAllFiles();
-        return response()->json($serviceResponse, $serviceResponse['status']);
+        return response()->json($serviceResponse,$serviceResponse['status']);
     }
     public function uploadCsv(Request $request)
     {

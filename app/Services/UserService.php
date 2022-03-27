@@ -9,7 +9,6 @@ use App\Helpers\UtilityHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Validator;
 use App\Variables\Variable;
 
 class UserService implements UserContract
@@ -48,7 +47,6 @@ class UserService implements UserContract
 
         try{
             $user = [
-                'username' => $request->username,
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'email' => $request->email,
@@ -68,6 +66,7 @@ class UserService implements UserContract
 
             return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "New User Created", ["user"=> $userData, "user_tag" => $tagData]);
         }catch (\Exception $exception){
+            Log::error($exception->getMessage());
             return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something went wrong!!");
         }
     }
@@ -84,7 +83,6 @@ class UserService implements UserContract
         try {
 
             $user = [
-                'username' => $request->username,
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'email' => $request->email
@@ -111,10 +109,5 @@ class UserService implements UserContract
         }catch (\Exception $exception){
             Log::error($exception->getMessage());
         }
-    }
-
-    public function addCustomField($request)
-    {
-        // TODO: Implement addCustomField() method.
     }
 }

@@ -9,7 +9,14 @@ $router->post('/user/api/login','User\AuthController@login');
 
 $router->group(['namespace' => 'User', 'prefix' => 'user/api','middleware' => 'auth:user'], function () use ($router) {
     //Contact Routes
-    $router->get('/users/contacts/get-by-auth-user', 'ContactController@getContactsByUser');
+    $router->get('/contacts/get-by-auth-user', 'ContactController@getContactsByUser');
+
+    //Custom Fields Routes
+    $router->post('/custom-fields/add-field','ContactController@addCustomField');
+    $router->get('/custom-fields/get-by-auth-user', 'ContactController@getCustomFieldByUser');
+
+    //Filtering Query Routes
+    $router->get('/contacts/filter','ContactController@filter');
 });
 
 

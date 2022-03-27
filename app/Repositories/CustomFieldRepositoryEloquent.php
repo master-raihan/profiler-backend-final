@@ -17,4 +17,9 @@ class CustomFieldRepositoryEloquent extends BaseRepository implements CustomFiel
     public function addCustomField($customFieldData){
         return $this->model->create($customFieldData);
     }
+
+    public function getCustomFieldByUser($user_id)
+    {
+        return $this->model->where("user_id", (int) $user_id)->get();
+    }
 }

@@ -6,4 +6,6 @@ interface ContactContract
 {
     public function uploadContact();
     public function getAllContactsByAuthUser();
+    public function addCustomField($request);
+    public function filter($request);
 }

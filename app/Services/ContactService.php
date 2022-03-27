@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Contracts\Repositories\ContactRepository;
+use App\Contracts\Repositories\CustomFieldRepository;
 use App\Contracts\Repositories\FileRepository;
 use App\Contracts\Services\ContactContract;
 use App\Helpers\CsvParser;
 use App\Helpers\UtilityHelper;
+use App\Models\Contact;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -15,11 +17,13 @@ class ContactService implements ContactContract
 {
     private $contactRepository;
     private $fileRepository;
+    private $customFieldRepository;
 
-    public function __construct(ContactRepository $contactRepository, FileRepository $fileRepository)
+    public function __construct(ContactRepository $contactRepository, FileRepository $fileRepository, CustomFieldRepository $customFieldRepository)
     {
         $this->contactRepository = $contactRepository;
         $this->fileRepository = $fileRepository;
+        $this->customFieldRepository = $customFieldRepository;
     }
 
     public function uploadContact()
@@ -34,7 +38,7 @@ class ContactService implements ContactContract
                 if($pendingFile->status == 1){
                     $pendingFile->save();
                     $csvData = new CsvParser();
-                    $csvData->load('public/csv-files/'.$pendingFile['file_name_location']);
+                    $csvData->load('public/csv-files/'.$pendingFile['file_location']);
 
                     foreach ($csvData->read() as $row) {
                         $sample = array();
@@ -72,6 +76,126 @@ class ContactService implements ContactContract
         }catch (\Exception $exception){
             Log::error($exception->getMessage());
             return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something is wrong !!");
+        }
+    }
+
+    public function addCustomField($request){
+        try{
+            $customFieldData = [
+                'user_id' => Auth::guard('user')->user()->id,
+                'contact_id' => $request->contact_id,
+                'field_name' => $request->field_name,
+                'field_value' => $request->field_value
+            ];
+            $customFieldData = $this->customFieldRepository->addCustomField($customFieldData);
+            if($customFieldData){
+                return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Custom Field Successfully Added',$customFieldData);
+            }
+        }catch(\Exception $exception){
+            return UtilityHelper::RETURN_ERROR_FORMAT(
+                ResponseAlias::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    public function getCustomFieldByUser()
+    {
+        try{
+            $customFieldByUser = $this->customFieldRepository->getCustomFieldByUser(Auth::guard('user')->user()->id);
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Contacts by User Fetched", $customFieldByUser);
+        }catch (\Exception $exception){
+            Log::error($exception->getMessage());
+            return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something is wrong !!");
+        }
+    }
+
+    public function filter($request){
+        try{
+            if($request->match == "any"){
+                $options = $request->data;
+                $i = 0;
+                $contacts = Contact::query();
+                if($request->query_type == "equal"){
+                    foreach($options as $key => $value){
+                        if($i==0){
+                            $contacts = $contacts->where($key,$value);
+                        }else{
+                            $contacts = $contacts->orWhere($key,$value);
+                        }
+                        $i++;
+                    }
+                    $contactsData = $this->contactRepository->getContacts($contacts);
+                    if($contactsData){
+                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
+                    }
+                }
+                if($request->query_type == "start_with"){
+                    foreach($options as $key => $value){
+                        if($i==0){
+                            $contacts->where($key, 'like',$value . '%');
+                        }else{
+                            $contacts->orWhere($key, 'like',$value . '%');
+                        }
+                        $i++;
+                    }
+                    $contactsData = $this->contactRepository->getContacts($contacts);
+                    if($contactsData){
+                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
+                    }
+                }
+                if($request->query_type == "end_with"){
+                    foreach($options as $key => $value){
+                        if($i==0){
+                            $contacts->where($key, 'like', '%' . $value);
+                        }else{
+                            $contacts->orWhere($key, 'like','%' . $value);
+                        }
+                        $i++;
+                    }
+                    $contactsData = $this->contactRepository->getContacts($contacts);
+                    if($contactsData){
+                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
+                    }
+                }
+            }else{
+                if($request->query_type == "equal"){
+                    $options = $request->data;
+                    $where = [];
+                    foreach($options as $key => $value){
+                        $where[] = [$key,$value];
+                    }
+                    $contactsData = $this->contactRepository->getContactsWhere($where);
+                    if($contactsData){
+                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
+                    }
+                }
+                if($request->query_type == "start_with"){
+                    $options = $request->data;
+                    $where = [];
+                    foreach($options as $key => $value){
+                        $where[] = [$key, 'like', $value . '%'];
+                    }
+                    $contactsData = $this->contactRepository->getContactsWhere($where);
+                    if($contactsData){
+                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
+                    }
+                }
+                if($request->query_type == "end_with"){
+                    $options = $request->data;
+                    $where = [];
+                    foreach($options as $key => $value){
+                        $where[] = [$key, 'like', '%' . $value];
+                    }
+                    $contactsData = $this->contactRepository->getContactsWhere($where);
+                    if($contactsData){
+                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
+                    }
+                }
+            }
+        }catch(\Exception $exception){
+            return UtilityHelper::RETURN_ERROR_FORMAT(
+                ResponseAlias::HTTP_BAD_REQUEST
+            );
         }
     }
 
