@@ -199,6 +199,11 @@ class ContactService implements ContactContract
         }
     }
 
+    public function getFields()
+    {
+        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Fields fetched', config('csv.fields'));
+    }
+
     public function resolveNull($text)
     {
         if(empty($text)) {

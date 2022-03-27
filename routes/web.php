@@ -10,6 +10,7 @@ $router->post('/user/api/login','User\AuthController@login');
 $router->group(['namespace' => 'User', 'prefix' => 'user/api','middleware' => 'auth:user'], function () use ($router) {
     //Contact Routes
     $router->get('/contacts/get-by-auth-user', 'ContactController@getContactsByUser');
+    $router->get('/contacts/fields', 'ContactController@getFields');
 
     //Custom Fields Routes
     $router->post('/custom-fields/add-field','ContactController@addCustomField');

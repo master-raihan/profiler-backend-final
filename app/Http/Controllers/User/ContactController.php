@@ -32,4 +32,9 @@ class ContactController extends Controller
         return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
+    public function getFields(){
+        $serviceResponse = $this->contactService->getFields();
+        return response()->json($serviceResponse, $serviceResponse['status']);
+    }
+
 }
