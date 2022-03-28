@@ -112,6 +112,7 @@ class ContactService implements ContactContract
     public function filter($request){
         try{
             if($request->match == "any"){
+//                dd("ok");
                 $options = $request->data;
                 $i = 0;
                 $contacts = Contact::query();
