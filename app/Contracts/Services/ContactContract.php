@@ -9,4 +9,5 @@ interface ContactContract
     public function addCustomField($request);
     public function filter($request);
     public function getFields();
+    public function getCustomFieldByUser();
 }

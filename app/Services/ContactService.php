@@ -92,6 +92,7 @@ class ContactService implements ContactContract
                 return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Custom Field Successfully Added',$customFieldData);
             }
         }catch(\Exception $exception){
+            Log::error($exception->getMessage());
             return UtilityHelper::RETURN_ERROR_FORMAT(
                 ResponseAlias::HTTP_BAD_REQUEST
             );
@@ -112,88 +113,45 @@ class ContactService implements ContactContract
     public function filter($request){
         try{
             if($request->match == "any"){
-//                dd("ok");
-                $options = $request->data;
-                $i = 0;
+                $options = $request->queries;
                 $contacts = Contact::query();
-                if($request->query_type == "equal"){
-                    foreach($options as $key => $value){
-                        if($i==0){
-                            $contacts = $contacts->where($key,$value);
-                        }else{
-                            $contacts = $contacts->orWhere($key,$value);
+                foreach($options as $option){
+                    switch ($option['condition']){
+                        case 'equal':
+                            $contacts = $contacts->orWhere($option['fieldName'], '=', $option['fieldValue']);
+                            break;
+                        case 'start_with':
+                            $contacts = $contacts->orWhere($option['fieldName'], 'like',$option['fieldValue'] . '%');
+                            break;
+                        case 'end_with':
+                            $contacts = $contacts->orWhere($option['fieldName'], 'like','%' . $option['fieldValue']);
+                            break;
+                    }
+                }
+                $contactsData = $this->contactRepository->getContacts($contacts);
+            }elseif ($request->match == "all"){
+                    $options = $request->queries;
+                    $contacts = Contact::query();
+                    foreach($options as $option){
+                        switch ($option['condition']){
+                            case 'equal':
+                                $contacts = $contacts->where($option['fieldName'], '=', $option['fieldValue']);
+                                break;
+                            case 'start_with':
+                                $contacts = $contacts->where($option['fieldName'], 'like',$option['fieldValue'] . '%');
+                                break;
+                            case 'end_with':
+                                $contacts = $contacts->where($option['fieldName'], 'like','%' . $option['fieldValue']);
+                                break;
                         }
-                        $i++;
                     }
                     $contactsData = $this->contactRepository->getContacts($contacts);
-                    if($contactsData){
-                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
-                    }
-                }
-                if($request->query_type == "start_with"){
-                    foreach($options as $key => $value){
-                        if($i==0){
-                            $contacts->where($key, 'like',$value . '%');
-                        }else{
-                            $contacts->orWhere($key, 'like',$value . '%');
-                        }
-                        $i++;
-                    }
-                    $contactsData = $this->contactRepository->getContacts($contacts);
-                    if($contactsData){
-                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
-                    }
-                }
-                if($request->query_type == "end_with"){
-                    foreach($options as $key => $value){
-                        if($i==0){
-                            $contacts->where($key, 'like', '%' . $value);
-                        }else{
-                            $contacts->orWhere($key, 'like','%' . $value);
-                        }
-                        $i++;
-                    }
-                    $contactsData = $this->contactRepository->getContacts($contacts);
-                    if($contactsData){
-                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
-                    }
-                }
-            }else{
-                if($request->query_type == "equal"){
-                    $options = $request->data;
-                    $where = [];
-                    foreach($options as $key => $value){
-                        $where[] = [$key,$value];
-                    }
-                    $contactsData = $this->contactRepository->getContactsWhere($where);
-                    if($contactsData){
-                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
-                    }
-                }
-                if($request->query_type == "start_with"){
-                    $options = $request->data;
-                    $where = [];
-                    foreach($options as $key => $value){
-                        $where[] = [$key, 'like', $value . '%'];
-                    }
-                    $contactsData = $this->contactRepository->getContactsWhere($where);
-                    if($contactsData){
-                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
-                    }
-                }
-                if($request->query_type == "end_with"){
-                    $options = $request->data;
-                    $where = [];
-                    foreach($options as $key => $value){
-                        $where[] = [$key, 'like', '%' . $value];
-                    }
-                    $contactsData = $this->contactRepository->getContactsWhere($where);
-                    if($contactsData){
-                        return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
-                    }
-                }
+            }
+            if($contactsData){
+                return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'Searched Result',$contactsData);
             }
         }catch(\Exception $exception){
+            Log::error($exception->getMessage());
             return UtilityHelper::RETURN_ERROR_FORMAT(
                 ResponseAlias::HTTP_BAD_REQUEST
             );

@@ -37,4 +37,10 @@ class ContactController extends Controller
         return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
+    public function getCustomFieldByUser()
+    {
+        $serviceResponse = $this->contactService->getCustomFieldByUser();
+        return response()->json($serviceResponse, $serviceResponse['status']);
+    }
+
 }

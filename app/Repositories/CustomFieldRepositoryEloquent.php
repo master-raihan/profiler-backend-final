@@ -15,7 +15,14 @@ class CustomFieldRepositoryEloquent extends BaseRepository implements CustomFiel
     }
 
     public function addCustomField($customFieldData){
-        return $this->model->create($customFieldData);
+        $customFieldDataResponse = $this->model->where('contact_id', $customFieldData['contact_id'])->where('user_id', $customFieldData['user_id'])->where('field_name', $customFieldData['field_name'])->first();
+
+        if ($customFieldDataResponse !== null) {
+            $customFieldDataResponse->update(['field_value' => $customFieldData['field_value']]);
+        } else {
+            $customFieldDataResponse = $this->model->create($customFieldData);
+        }
+        return $customFieldDataResponse;
     }
 
     public function getCustomFieldByUser($user_id)
