@@ -17,7 +17,7 @@ $router->group(['namespace' => 'User', 'prefix' => 'user/api','middleware' => 'a
     $router->get('/custom-fields/get-by-auth-user', 'ContactController@getCustomFieldByUser');
 
     //Filtering Query Routes
-    $router->get('/contacts/filter','ContactController@filter');
+    $router->post('/contacts/filter','ContactController@filter');
 });
 
 
