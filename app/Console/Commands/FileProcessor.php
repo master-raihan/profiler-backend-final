@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Contracts\Services\ContactContract;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class FileProcessor extends Command
 {
@@ -40,6 +41,11 @@ class FileProcessor extends Command
      */
     public function handle()
     {
-        $this->contactService->uploadContact();
+        try{
+            $this->contactService->uploadContact();
+        }catch (\Exception $exception){
+            Log::error($exception->getMessage());
+        }
+
     }
 }

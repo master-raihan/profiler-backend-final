@@ -6,6 +6,7 @@ use App\Contracts\Services\AuthContract;
 use App\Helpers\UtilityHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AuthService implements AuthContract
@@ -19,6 +20,20 @@ class AuthService implements AuthContract
     public function login($request, $guard)
     {
         try{
+
+            $rules = [
+                'email' => 'required|email',
+                'password' => 'required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return UtilityHelper::RETURN_ERROR_FORMAT(
+                    ResponseAlias::HTTP_BAD_REQUEST,
+                    $validator->errors()
+                );
+            }
             $credentials = $request->only(['email', 'password']);
             if (! $token = Auth::guard($guard)->attempt($credentials)) {
                 return UtilityHelper::RETURN_ERROR_FORMAT(

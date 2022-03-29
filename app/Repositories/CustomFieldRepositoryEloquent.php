@@ -6,6 +6,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\CustomFieldRepository;
 use App\Models\CustomField;
 use App\Repositories\BaseRepository\BaseRepository;
+use Illuminate\Support\Facades\Auth;
 
 class CustomFieldRepositoryEloquent extends BaseRepository implements CustomFieldRepository
 {
@@ -28,5 +29,10 @@ class CustomFieldRepositoryEloquent extends BaseRepository implements CustomFiel
     public function getCustomFieldByUser($user_id)
     {
         return $this->model->where("user_id", (int) $user_id)->get();
+    }
+
+    public function deleteCustomField($id)
+    {
+        return $this->model->where("field_name", $id)->where("user_id", Auth::guard('user')->user()->id)->delete();
     }
 }

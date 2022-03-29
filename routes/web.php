@@ -15,6 +15,7 @@ $router->group(['namespace' => 'User', 'prefix' => 'user/api','middleware' => 'a
     //Custom Fields Routes
     $router->post('/custom-fields/add-field','ContactController@addCustomField');
     $router->get('/custom-fields/get-by-auth-user', 'ContactController@getCustomFieldByUser');
+    $router->post('/custom-fields/delete-by-auth-user','ContactController@deleteCustomField');
 
     //Filtering Query Routes
     $router->post('/contacts/filter','ContactController@filter');
