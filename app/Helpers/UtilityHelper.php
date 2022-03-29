@@ -24,4 +24,8 @@ class UtilityHelper
             'data' => null
         ];
     }
+
+    public static function findIndexOfKey($key_to_index,$array){
+        return array_search($key_to_index,array_keys($array));
+    }
 }

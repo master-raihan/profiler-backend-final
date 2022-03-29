@@ -10,4 +10,5 @@ interface ContactContract
     public function filter($request);
     public function getFields();
     public function getCustomFieldByUser();
+    public function deleteCustomField($request);
 }

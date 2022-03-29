@@ -8,6 +8,7 @@ use App\Contracts\Repositories\UserRepository;
 use App\Helpers\UtilityHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use App\Variables\Variable;
 
@@ -46,6 +47,21 @@ class UserService implements UserContract
     public function createUser($request){
 
         try{
+            $rules = [
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|email|unique:users',
+                'password' => 'required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return UtilityHelper::RETURN_ERROR_FORMAT(
+                    ResponseAlias::HTTP_BAD_REQUEST,
+                    $validator->errors()
+                );
+            }
             $user = [
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,

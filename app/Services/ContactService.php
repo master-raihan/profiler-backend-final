@@ -53,6 +53,9 @@ class ContactService implements ContactContract
                     if($this->contactRepository->uploadContact($response)){
                         $pendingFile->status = 3;
                         $pendingFile->save();
+                        if(file_exists($file)){
+                            unlink($file);
+                        }
                     }else {
                         $pendingFile->status = 0;
                         $pendingFile->save();
@@ -93,6 +96,22 @@ class ContactService implements ContactContract
             }
         }catch(\Exception $exception){
             Log::error($exception->getMessage());
+            return UtilityHelper::RETURN_ERROR_FORMAT(
+                ResponseAlias::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    public function deleteCustomField($request){
+        try{
+            if($this->customFieldRepository->deleteCustomField($request->fieldName)){
+                return UtilityHelper::RETURN_SUCCESS_FORMAT(
+                    ResponseAlias::HTTP_OK,
+                    'A Custom Field Successfully Deleted!',
+                    $request->fieldName
+                );
+            }
+        }catch (\Exception $exception){
             return UtilityHelper::RETURN_ERROR_FORMAT(
                 ResponseAlias::HTTP_BAD_REQUEST
             );

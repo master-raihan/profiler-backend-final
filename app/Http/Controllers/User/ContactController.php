@@ -43,4 +43,10 @@ class ContactController extends Controller
         return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
+    public function deleteCustomField(Request $request)
+    {
+        $serviceResponse = $this->contactService->deleteCustomField($request);
+        return response()->json($serviceResponse, $serviceResponse['status']);
+    }
+
 }
