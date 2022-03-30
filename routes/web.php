@@ -34,11 +34,13 @@ $router->group(['namespace' => 'Admin', 'prefix' => 'admin/api','middleware' => 
     $router->get('/users/edit/{id}','UserController@editUser');
     $router->post('/users/update','UserController@updateUser');
     $router->delete('/users/delete/{id}','UserController@deleteUser');
+    $router->get('users/tag/{id}','UserController@getUserTags');
 
     //Tag Routes
     $router->get('/tags','TagController@getAllTags');
     $router->post('/tags/create','TagController@createTag');
     $router->delete('/tags/delete/{id}','TagController@deleteTag');
+
 });
 
 

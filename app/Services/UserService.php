@@ -126,4 +126,13 @@ class UserService implements UserContract
             Log::error($exception->getMessage());
         }
     }
+
+    public function getUserTags($id){
+        try {
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "User Fetched Successfully", $this->tagRepository->getUserTags($id));
+        }catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something went wrong!!!");
+        }
+    }
 }
