@@ -16,7 +16,6 @@ class FileService implements FileContract
     public function __construct(FileRepository $fileRepository)
     {
         $this->fileRepository = $fileRepository;
-
     }
 
     public function getAllFiles()
@@ -70,6 +69,7 @@ class FileService implements FileContract
         }
     }
 
+
     public function getFileById($id)
     {
         try{
@@ -82,7 +82,6 @@ class FileService implements FileContract
 
     public function processCsv($request)
     {
-
         try{
             if($request->has('csvFileId'))
             {
@@ -90,6 +89,7 @@ class FileService implements FileContract
                 $sample = array();
                 $headings = config('csv.fields');
                 foreach (config('csv.fields') as $field) {
+                    Log::info($request->json()->all());
                     if ($request->json()->all()['fields'][$field] != -1)
                     {
                         $sample[$field] = $request->json()->all()['fields'][$field];
@@ -104,6 +104,7 @@ class FileService implements FileContract
                     'user_id' => $csvFile->user_id
                 ];
                 $tempCsvFileLocation = 'pending-csv-files/temp-'.time().'.json';
+                Log::info($tempCsvFileLocation);
                 file_put_contents($tempCsvFileLocation, json_encode($response));
 
                 return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Queued For Processing", $tempCsvFileLocation);

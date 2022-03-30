@@ -42,4 +42,8 @@ class UserController extends Controller
         $serviceResponse = $this->userService->deleteUser( (int) $id);
         return response()->json($serviceResponse, $serviceResponse['status']);
     }
+    public function getUserTags($id){
+        $serviceResponse = $this->userService->getUserTags($id);
+        return response()->json($serviceResponse, $serviceResponse['status']);
+    }
 }

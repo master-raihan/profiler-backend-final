@@ -28,4 +28,9 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
     {
         return $this->model->find($id)->delete();
     }
+
+    public function getUserTags($id)
+    {
+        return $this->model->where(['user_id' => $id])->get();
+    }
 }
