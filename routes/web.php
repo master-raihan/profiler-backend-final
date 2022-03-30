@@ -31,7 +31,7 @@ $router->group(['namespace' => 'Admin', 'prefix' => 'admin/api','middleware' => 
     //User Routes
     $router->get('/users','UserController@getAllUsers');
     $router->post('/users/create','UserController@createUser');
-    $router->get('/users/edit/{id}','UserController@editUser');
+    $router->get('/users/get-user/{id}','UserController@getUserById');
     $router->post('/users/update','UserController@updateUser');
     $router->delete('/users/delete/{id}','UserController@deleteUser');
 

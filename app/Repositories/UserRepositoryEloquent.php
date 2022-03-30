@@ -17,27 +17,29 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
 
     public function getAllUsers()
     {
-        $allUsers = $this->model->get();
-        return $allUsers;
+        return  $this->model->get();
     }
 
     public function getLastUser(){
         return $this->model->latest()->first();
     }
 
-    public function createUser($data){
-        return $this->model->create($data);
+    public function createUser($user)
+    {
+        return $this->model->create($user);
     }
-    public function editUser($id){
-        $user = $this->model->find($id);
-        return $user;
-    }
-
-    public function updateUser($data, $userId) {
-        return $this->model->where(['id' => $userId])->update($data);
+    public function getUserById($id)
+    {
+        return $this->model->find($id);
     }
 
-    public function deleteUser($id){
-        return $this->model->where(['id' => $id])->delete();
+    public function updateUser($user, $id)
+    {
+        return $this->model->find($id)->update($user);
+    }
+
+    public function deleteUser($id)
+    {
+        return $this->model->find($id)->delete();
     }
 }

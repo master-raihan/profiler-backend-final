@@ -15,13 +15,14 @@ class CustomFieldRepositoryEloquent extends BaseRepository implements CustomFiel
         return new CustomField();
     }
 
-    public function addCustomField($customFieldData){
-        $customFieldDataResponse = $this->model->where('contact_id', $customFieldData['contact_id'])->where('user_id', $customFieldData['user_id'])->where('field_name', $customFieldData['field_name'])->first();
+    public function addCustomField($field)
+    {
+        $customFieldDataResponse = $this->model->where('contact_id', $field['contact_id'])->where('user_id', $field['user_id'])->where('field_name', $field['field_name'])->first();
 
         if ($customFieldDataResponse !== null) {
-            $customFieldDataResponse->update(['field_value' => $customFieldData['field_value']]);
+            $customFieldDataResponse->update(['field_value' => $field['field_value']]);
         } else {
-            $customFieldDataResponse = $this->model->create($customFieldData);
+            $customFieldDataResponse = $this->model->create($field);
         }
         return $customFieldDataResponse;
     }
@@ -31,8 +32,8 @@ class CustomFieldRepositoryEloquent extends BaseRepository implements CustomFiel
         return $this->model->where("user_id", (int) $user_id)->get();
     }
 
-    public function deleteCustomField($id)
+    public function deleteCustomField($fieldName)
     {
-        return $this->model->where("field_name", $id)->where("user_id", Auth::guard('user')->user()->id)->delete();
+        return $this->model->where("field_name", $fieldName)->where("user_id", Auth::guard('user')->user()->id)->delete();
     }
 }

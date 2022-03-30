@@ -36,14 +36,6 @@ class UserService implements UserContract
         }
     }
 
-    public function getLastUser(){
-        try{
-            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Last User Fetched", $this->userRepository->getLastUser());
-        }catch (\Exception $exception){
-            return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Something is wrong !!");
-        }
-    }
-
     public function createUser($request){
 
         try{
@@ -87,7 +79,7 @@ class UserService implements UserContract
         }
     }
 
-    public  function editUser($id){
+    public  function getUserById($id){
         try{
             return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Edit User", $this->userRepository->editUser($id));
         }catch (\Exception $exception){

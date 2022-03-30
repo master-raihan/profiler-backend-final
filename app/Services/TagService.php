@@ -34,7 +34,7 @@ class TagService implements TagContract
     public function createTag($request){
         try{
             $tag = [
-                'user_id' => '1',
+                'user_id' => $request->user_id,
                 'tag_value' => $request->tag_value
             ];
             return UtilityHelper::RETURN_SUCCESS_FORMAT(

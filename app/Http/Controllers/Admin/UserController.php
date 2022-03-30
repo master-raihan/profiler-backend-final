@@ -26,9 +26,9 @@ class UserController extends Controller
         return response()->json($serviceResponse, $serviceResponse['status']);
     }
 
-    public function editUser($id)
+    public function getUserById($id)
     {
-        return $this->userService->editUser($id);
+        return $this->userService->getUserById($id);
     }
 
     public function updateUser(Request $request)

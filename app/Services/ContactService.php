@@ -191,4 +191,6 @@ class ContactService implements ContactContract
             return $text;
         }
     }
+
+
 }
