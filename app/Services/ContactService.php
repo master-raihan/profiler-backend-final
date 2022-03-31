@@ -30,13 +30,16 @@ class ContactService implements ContactContract
     {
         try{
             $files = glob("public/pending-csv-files/*.json");
+            $tag_files = glob("public/pending-tags-files/*.json");
+//            Log::info($tag_files);
             $response = array();
+            $tag_response = array();
             foreach ($files as $file){
                 $string = file_get_contents($file);
                 $json_a = json_decode($string,true);
                 $pendingFile = $this->fileRepository->getFileById($json_a['file_id']);
                 if($pendingFile->status == 1){
-                    $pendingFile->save();
+//                    $pendingFile->save();
                     $csvData = new CsvParser();
                     $csvData->load('public/csv-files/'.$pendingFile['file_location']);
 
@@ -50,7 +53,26 @@ class ContactService implements ContactContract
                         }
                         $response[] = $sample;
                     }
-                    if($this->contactRepository->uploadContact($response)){
+                    $contactData = $this->contactRepository->uploadContact($response);
+                    if($contactData){
+                        foreach($tag_files as $tag_file){
+                            $file_string = file_get_contents($tag_file);
+                            $file_json_data = json_decode($file_string,true);
+                            Log::info($file_json_data['tags'][0]);
+                            foreach($file_json_data['tags'] as $tag_id){
+                                Log::info($tag_id);
+                            }
+//                            Log::info($file_json_data);
+//                            Log::info($contactData);
+//                            foreach($contactData as $data){
+//                                Log::info($data);
+//                                $tag_contact[] = [
+//                                    'tag_id' => $file_json_data['id'],
+//                                    'contact_id' => $data->id
+//                                ];
+//                            }
+                        }
+
                         $pendingFile->status = 3;
                         $pendingFile->save();
                         if(file_exists($file)){

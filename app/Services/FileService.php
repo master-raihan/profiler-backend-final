@@ -100,7 +100,6 @@ class FileService implements FileContract
                 $sample = array();
                 $headings = config('csv.fields');
                 foreach (config('csv.fields') as $field) {
-                    Log::info($request->json()->all());
                     if ($request->json()->all()['fields'][$field] != -1)
                     {
                         $sample[$field] = $request->json()->all()['fields'][$field];
