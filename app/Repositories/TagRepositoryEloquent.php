@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\TagRepository;
 use App\Repositories\BaseRepository\BaseRepository;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Log;
 
 class TagRepositoryEloquent extends BaseRepository implements TagRepository
 {
@@ -16,16 +17,18 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
 
     public function getAllTags()
     {
-        $allUsers = $this->model->get();
-        return $allUsers;
+        return $this->model->get();
     }
 
-    public function createTag($data){
-        return $this->model->create($data);
+    public function createTag($tag)
+    {
+        Log::info($tag);
+        return $this->model->create($tag);
     }
 
-    public function deleteTag($id){
-        return $this->model->where(['id' => $id])->delete();
+    public function deleteTag($id)
+    {
+        return $this->model->find($id)->delete();
     }
 
     public function getUserTags($id)

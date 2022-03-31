@@ -34,6 +34,7 @@ class ContactService implements ContactContract
 //            Log::info($tag_files);
             $response = array();
             $tag_response = array();
+            $response = [];
             foreach ($files as $file){
                 $string = file_get_contents($file);
                 $json_a = json_decode($string,true);
@@ -44,35 +45,20 @@ class ContactService implements ContactContract
                     $csvData->load('public/csv-files/'.$pendingFile['file_location']);
 
                     foreach ($csvData->read() as $row) {
-                        $sample = array();
+                        $sample = [];
                         $sample['user_id'] = $json_a['user_id'];
                         foreach (config('csv.fields') as $index => $field) {
                             if($json_a['mapping'][$field] != -1){
                                 $sample[$field] = $this->resolveNull($row[$json_a['mapping'][$field]]);
                             }
                         }
-                        $response[] = $sample;
-                    }
-                    $contactData = $this->contactRepository->uploadContact($response);
-                    if($contactData){
-                        foreach($tag_files as $tag_file){
-                            $file_string = file_get_contents($tag_file);
-                            $file_json_data = json_decode($file_string,true);
-                            Log::info($file_json_data['tags'][0]);
-                            foreach($file_json_data['tags'] as $tag_id){
-                                Log::info($tag_id);
-                            }
-//                            Log::info($file_json_data);
-//                            Log::info($contactData);
-//                            foreach($contactData as $data){
-//                                Log::info($data);
-//                                $tag_contact[] = [
-//                                    'tag_id' => $file_json_data['id'],
-//                                    'contact_id' => $data->id
-//                                ];
-//                            }
-                        }
+                        $newContact = $this->contactRepository->uploadContact($sample);
+                        $response[] = $newContact;
 
+                        // Call Function here
+
+                    }
+                    if($response){
                         $pendingFile->status = 3;
                         $pendingFile->save();
                         if(file_exists($file)){

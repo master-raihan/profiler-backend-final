@@ -13,7 +13,6 @@ class TagController extends Controller
     public function __construct(TagContract $tagService)
     {
         $this->tagService = $tagService;
-
     }
     public function getAllTags()
     {
