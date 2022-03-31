@@ -34,7 +34,7 @@ $router->group(['namespace' => 'Admin', 'prefix' => 'admin/api','middleware' => 
     $router->get('/users/get-user/{id}','UserController@getUserById');
     $router->post('/users/update','UserController@updateUser');
     $router->delete('/users/delete/{id}','UserController@deleteUser');
-    $router->get('users/tag/{id}','UserController@getUserTags');
+    $router->get('users/tags/{id}','UserController@getUserTags');
 
     //Tag Routes
     $router->get('/tags','TagController@getAllTags');

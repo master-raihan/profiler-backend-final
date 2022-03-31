@@ -35,7 +35,8 @@ class TagService implements TagContract
         try{
             $tag = [
                 'user_id' => $request->user_id,
-                'tag_value' => $request->tag_value
+                'tag_value' => $request->tag_value,
+                'is_default' => $request->is_default
             ];
             return UtilityHelper::RETURN_SUCCESS_FORMAT(
                 ResponseAlias::HTTP_OK,

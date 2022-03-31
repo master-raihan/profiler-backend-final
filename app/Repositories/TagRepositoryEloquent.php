@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\TagRepository;
 use App\Repositories\BaseRepository\BaseRepository;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Log;
 
 class TagRepositoryEloquent extends BaseRepository implements TagRepository
 {
@@ -21,6 +22,7 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
 
     public function createTag($tag)
     {
+        Log::info($tag);
         return $this->model->create($tag);
     }
 
