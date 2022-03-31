@@ -6,6 +6,7 @@ use App\Contracts\Repositories\AuthRepository;
 use App\Contracts\Repositories\ContactRepository;
 use App\Contracts\Repositories\CustomFieldRepository;
 use App\Contracts\Repositories\FileRepository;
+use App\Contracts\Repositories\TagContactRepository;
 use App\Contracts\Repositories\TagRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Contracts\Services\AuthContract;
@@ -17,6 +18,7 @@ use App\Repositories\AuthRepositoryEloquent;
 use App\Repositories\ContactRepositoryEloquent;
 use App\Repositories\CustomFieldRepositoryEloquent;
 use App\Repositories\FileRepositoryEloquent;
+use App\Repositories\TagContactRepositoryEloquent;
 use App\Repositories\TagRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\AuthService;
@@ -51,5 +53,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TagRepository::class, TagRepositoryEloquent::class);
 
         $this->app->bind(CustomFieldRepository::class, CustomFieldRepositoryEloquent::class);
+        $this->app->bind(TagContactRepository::class, TagContactRepositoryEloquent::class);
     }
 }

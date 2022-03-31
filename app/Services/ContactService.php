@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\Repositories\ContactRepository;
 use App\Contracts\Repositories\CustomFieldRepository;
 use App\Contracts\Repositories\FileRepository;
+use App\Contracts\Repositories\TagContactRepository;
 use App\Contracts\Services\ContactContract;
 use App\Helpers\CsvParser;
 use App\Helpers\UtilityHelper;
@@ -18,32 +19,28 @@ class ContactService implements ContactContract
     private $contactRepository;
     private $fileRepository;
     private $customFieldRepository;
+    private $tagContactRepository;
 
-    public function __construct(ContactRepository $contactRepository, FileRepository $fileRepository, CustomFieldRepository $customFieldRepository)
+    public function __construct(ContactRepository $contactRepository, FileRepository $fileRepository, CustomFieldRepository $customFieldRepository, TagContactRepository $tagContactRepository)
     {
         $this->contactRepository = $contactRepository;
         $this->fileRepository = $fileRepository;
         $this->customFieldRepository = $customFieldRepository;
+        $this->tagContactRepository = $tagContactRepository;
     }
 
     public function uploadContact()
     {
         try{
             $files = glob("public/pending-csv-files/*.json");
-            $tag_files = glob("public/pending-tags-files/*.json");
-//            Log::info($tag_files);
-            $response = array();
-            $tag_response = array();
             $response = [];
             foreach ($files as $file){
                 $string = file_get_contents($file);
                 $json_a = json_decode($string,true);
                 $pendingFile = $this->fileRepository->getFileById($json_a['file_id']);
                 if($pendingFile->status == 1){
-//                    $pendingFile->save();
                     $csvData = new CsvParser();
                     $csvData->load('public/csv-files/'.$pendingFile['file_location']);
-
                     foreach ($csvData->read() as $row) {
                         $sample = [];
                         $sample['user_id'] = $json_a['user_id'];
@@ -56,7 +53,7 @@ class ContactService implements ContactContract
                         $response[] = $newContact;
 
                         // Call Function here
-
+                        $this->setTagContact($json_a['tags'],$newContact->id);
                     }
                     if($response){
                         $pendingFile->status = 3;
@@ -76,6 +73,19 @@ class ContactService implements ContactContract
             );
         }catch (\Exception $exception) {
             Log::error($exception->getMessage());
+        }
+    }
+
+    public function setTagContact($tags,$contactId){
+        if (!empty($tags)) {
+            $data = [];
+            foreach($tags as $tag){
+                $data[] = [
+                    "tag_id" => $tag,
+                    "contact_id" =>  $contactId
+                ];
+            }
+            $this->tagContactRepository->setTagContact($data);
         }
     }
 

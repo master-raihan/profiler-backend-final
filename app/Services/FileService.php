@@ -60,7 +60,6 @@ class FileService implements FileContract
                     }else {
                         $csvData = $file->read(false);
                     }
-                    $this->processTags($request,$uploadedCsvFile);
                 }
                 return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Uploaded!", ['headings'=> $headings, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile]);
             }
@@ -69,17 +68,6 @@ class FileService implements FileContract
             Log::error($exception->getMessage());
         }
     }
-
-    public function processTags($request,$uploadedCsvFile){
-        $response = [
-            'file_id'=> $uploadedCsvFile->id,
-            'user_id' => $request->user_id,
-            'tags' => $request->tags
-        ];
-        $tempTagFileLocation = 'pending-tags-files/temp-'.time().'.json';
-        file_put_contents($tempTagFileLocation, json_encode($response));
-    }
-
 
     public function getFileById($id)
     {
@@ -110,11 +98,11 @@ class FileService implements FileContract
 
                 $response = [
                     'mapping'=> $sample,
+                    'tags'=> $request->json()->all()['tags'],
                     'file_id' => $csvFile->id,
                     'user_id' => $csvFile->user_id
                 ];
                 $tempCsvFileLocation = 'pending-csv-files/temp-'.time().'.json';
-//                Log::info($tempCsvFileLocation);
                 file_put_contents($tempCsvFileLocation, json_encode($response));
 
                 return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Queued For Processing", $tempCsvFileLocation);

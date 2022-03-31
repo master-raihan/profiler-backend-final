@@ -6,3 +6,4 @@ Homestead.yaml
 .phpunit.result.cache
 public/csv-files
 public/pending-csv-files
+public/pending-tags-files
