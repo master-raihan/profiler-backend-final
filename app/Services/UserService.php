@@ -81,7 +81,7 @@ class UserService implements UserContract
 
     public  function getUserById($id){
         try{
-            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Edit User", $this->userRepository->editUser($id));
+            return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Edit User", $this->userRepository->getUserById($id));
         }catch (\Exception $exception){
             return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, "Some thing went wrong!!");
         }
@@ -89,16 +89,31 @@ class UserService implements UserContract
 
     public function updateUser($request){
         try {
+            $rules = [
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => "required|email|unique:users,email,{$request->id}"
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return UtilityHelper::RETURN_ERROR_FORMAT(
+                    ResponseAlias::HTTP_BAD_REQUEST,
+                    $validator->errors()
+                );
+            }
 
             $user = [
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
-                'email' => $request->email
+                'email' => $request->email,
+                'status' => $request->status
             ];
 
-            if ($this->userRepository->updateUser($user, (int) $request['id'])) {
-
-                return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'User Updated!', []);
+            if ($this->userRepository->updateUser($user, (int) $request->id)) {
+                $updatedUser = $this->getUserById((int) $request->id);
+                return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, 'User Updated Successfully!', $updatedUser);
             }
 
             return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, 'Failed To Update User!');

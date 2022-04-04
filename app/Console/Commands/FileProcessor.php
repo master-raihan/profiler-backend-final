@@ -42,7 +42,11 @@ class FileProcessor extends Command
     public function handle()
     {
         try{
+            $time_start = microtime(true);
             $this->contactService->uploadContact();
+            $time_end = microtime(true);
+            $execution_time = ($time_end - $time_start)/60;
+            Log::info($execution_time);
         }catch (\Exception $exception){
             Log::error($exception->getMessage());
         }

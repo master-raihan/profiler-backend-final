@@ -41,6 +41,8 @@ class ContactService implements ContactContract
                 if($pendingFile->status == 1){
                     $csvData = new CsvParser();
                     $csvData->load('public/csv-files/'.$pendingFile['file_location']);
+                    $pendingFile->status = 2;
+                    $pendingFile->save();
                     foreach ($csvData->read() as $row) {
                         $sample = [];
                         $sample['user_id'] = $json_a['user_id'];

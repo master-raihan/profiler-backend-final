@@ -31,7 +31,7 @@ class FileService implements FileContract
     public function uploadCsv($request)
     {
         try{
-            if($request->has('csvFile'))
+            if($request->hasFile('csvFile'))
             {
                 $allowedFileExtension=['csv'];
                 $csvFile = $request->file('csvFile');
