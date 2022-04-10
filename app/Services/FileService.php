@@ -39,29 +39,40 @@ class FileService implements FileContract
                 $check = in_array($extension, $allowedFileExtension);
 
                 if($check){
-                    $fileLocation = time() . '-' .$csvFile->getClientOriginalName();
-                    $csvFile->move('csv-files', $fileLocation);
+
+                    $fileOriginalName = time() . '-' .$csvFile->getClientOriginalName();
+                    $data = file($csvFile);
+                    $chunks = array_chunk($data, 10);
+
+                    $filePublicLocation = 'csv-files/'.time() . '-' .explode('.', $csvFile->getClientOriginalName())[0];
+
+                    mkdir($filePublicLocation);
+
+                    foreach ($chunks as $key => $chunk) {
+                        $path = file_put_contents($filePublicLocation.'/'.$key.'.csv', $chunk);
+                    }
 
                     $file = [
                         'user_id' => $request->user_id,
                         'status' => $request->status,
-                        'file_location' => $fileLocation
+                        'file_location' => $filePublicLocation
                     ];
 
                     $uploadedCsvFile = $this->fileRepository->uploadCsv($file);
-
                     $file = new CsvParser();
                     $csvFile = $this->fileRepository->getFileById($uploadedCsvFile->id);
-                    $file->load('csv-files/'.$csvFile->file_location);
+                    $file->load($csvFile->file_location.'/0.csv');
                     $headings = config('csv.fields');
+
                     if($request->header == 1)
                     {
                         $csvData = $file->read();
                     }else {
                         $csvData = $file->read(false);
                     }
+                    return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Uploaded!", ['headings'=> $headings, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile]);
                 }
-                return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "File Uploaded!", ['headings'=> $headings, 'csvData'=>$csvData, 'csvFile' => $uploadedCsvFile]);
+                return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, 'Only Csv File Allowed');
             }
             return UtilityHelper::RETURN_ERROR_FORMAT(ResponseAlias::HTTP_BAD_REQUEST, 'File Unavailable');
         }catch (\Exception $exception) {

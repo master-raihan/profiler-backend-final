@@ -35,37 +35,46 @@ class ContactService implements ContactContract
             $files = glob("public/pending-csv-files/*.json");
             $response = [];
             foreach ($files as $file){
-                $string = file_get_contents($file);
-                $json_a = json_decode($string,true);
-                $pendingFile = $this->fileRepository->getFileById($json_a['file_id']);
-                if($pendingFile->status == 1){
-                    $csvData = new CsvParser();
-                    $csvData->load('public/csv-files/'.$pendingFile['file_location']);
-                    $pendingFile->status = 2;
-                    $pendingFile->save();
-                    foreach ($csvData->read() as $row) {
-                        $sample = [];
-                        $sample['user_id'] = $json_a['user_id'];
-                        foreach (config('csv.fields') as $index => $field) {
-                            if($json_a['mapping'][$field] != -1){
-                                $sample[$field] = $this->resolveNull($row[$json_a['mapping'][$field]]);
-                            }
-                        }
-                        $newContact = $this->contactRepository->uploadContact($sample);
-                        $response[] = $newContact;
+                $csvFile = file_get_contents($file);
+                $csvFileJson = json_decode($csvFile,true);
+                $pendingFile = $this->fileRepository->getFileById($csvFileJson['file_id']);
 
-                        // Call Function here
-                        $this->setTagContact($json_a['tags'],$newContact->id);
-                    }
-                    if($response){
-                        $pendingFile->status = 3;
-                        $pendingFile->save();
-                        if(file_exists($file)){
-                            unlink($file);
+                if($pendingFile->status == 1){
+                    $pendingFiles = glob('public/'.$pendingFile['file_location']);
+                    Log::info($pendingFiles);
+//
+                    foreach ($pendingFiles as $pendingFilePath){
+                        Log::info($pendingFiles);
+                        $csvData = new CsvParser();
+                        $csvData->load($pendingFilePath.'.csv');
+
+                        foreach ($csvData->read() as $row) {
+                            $sample = [];
+                            $sample['user_id'] = $csvFileJson['user_id'];
+                            foreach (config('csv.fields') as $index => $field) {
+                                if($csvFileJson['mapping'][$field] != -1){
+                                    $sample[$field] = $this->resolveNull($row[$csvFileJson['mapping'][$field]]);
+                                }
+                            }
+                            $newContact = $this->contactRepository->uploadContact($sample);
+                            $response[] = $newContact;
+
+                            // Call Function here
+                            $this->setTagContact($csvFileJson['tags'],$newContact->id);
                         }
-                    }else {
-                        $pendingFile->status = 0;
-                        $pendingFile->save();
+                        if($response){
+                            $pendingFile->status = 3;
+                            $pendingFile->save();
+                            if(file_exists($pendingFilePath)){
+                                unlink($pendingFilePath);
+                            }
+                            if(file_exists($file)){
+                                unlink($file);
+                            }
+                        }else {
+                            $pendingFile->status = 0;
+                            $pendingFile->save();
+                        }
                     }
                 }
             }
