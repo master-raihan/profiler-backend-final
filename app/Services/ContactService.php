@@ -40,13 +40,11 @@ class ContactService implements ContactContract
                 $pendingFile = $this->fileRepository->getFileById($csvFileJson['file_id']);
 
                 if($pendingFile->status == 1){
-                    $pendingFiles = glob('public/'.$pendingFile['file_location']);
-                    Log::info($pendingFiles);
-//
+                    $pendingFiles = glob('public/'.$pendingFile['file_location'].'/*.csv');
+
                     foreach ($pendingFiles as $pendingFilePath){
-                        Log::info($pendingFiles);
                         $csvData = new CsvParser();
-                        $csvData->load($pendingFilePath.'.csv');
+                        $csvData->load($pendingFilePath);
 
                         foreach ($csvData->read() as $row) {
                             $sample = [];
@@ -56,25 +54,28 @@ class ContactService implements ContactContract
                                     $sample[$field] = $this->resolveNull($row[$csvFileJson['mapping'][$field]]);
                                 }
                             }
+
                             $newContact = $this->contactRepository->uploadContact($sample);
                             $response[] = $newContact;
 
                             // Call Function here
                             $this->setTagContact($csvFileJson['tags'],$newContact->id);
                         }
-                        if($response){
-                            $pendingFile->status = 3;
-                            $pendingFile->save();
-                            if(file_exists($pendingFilePath)){
-                                unlink($pendingFilePath);
-                            }
-                            if(file_exists($file)){
-                                unlink($file);
-                            }
-                        }else {
-                            $pendingFile->status = 0;
-                            $pendingFile->save();
+
+                        if(file_exists($pendingFilePath)){
+                            unlink($pendingFilePath);
                         }
+                    }
+
+                    if($response){
+                        $pendingFile->status = 3;
+                        $pendingFile->save();
+                        if(file_exists($file)){
+                            unlink($file);
+                        }
+                    }else {
+                        $pendingFile->status = 0;
+                        $pendingFile->save();
                     }
                 }
             }
@@ -104,6 +105,7 @@ class ContactService implements ContactContract
     {
         try{
             $contactsByUser = $this->contactRepository->getAllContactsByUser(Auth::guard('user')->user()->id);
+
             return UtilityHelper::RETURN_SUCCESS_FORMAT(ResponseAlias::HTTP_OK, "Contacts by User Fetched", $contactsByUser);
         }catch (\Exception $exception){
             Log::error($exception->getMessage());

@@ -1,6 +1,8 @@
 <?php
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Log;
+
 class CsvParser
 {
     protected $path;

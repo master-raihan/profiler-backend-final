@@ -42,7 +42,7 @@ class FileService implements FileContract
 
                     $fileOriginalName = time() . '-' .$csvFile->getClientOriginalName();
                     $data = file($csvFile);
-                    $chunks = array_chunk($data, 10);
+                    $chunks = array_chunk($data, 1000);
 
                     $filePublicLocation = 'csv-files/'.time() . '-' .explode('.', $csvFile->getClientOriginalName())[0];
 
