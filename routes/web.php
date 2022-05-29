@@ -43,4 +43,6 @@ $router->group(['namespace' => 'Admin', 'prefix' => 'admin/api','middleware' => 
 
 });
 
+$router->post('/svg','Svg\SvgController@svg');
+
 
